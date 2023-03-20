@@ -1,31 +1,34 @@
 #!/bin/sh
 
 #Get the path to the script and trim to get the directory.
-echo "Setting path to current directory to:"
-pathtome=$0
-pathtome="${pathtome%/*}"
-PROJECTNAME=AppleSignInANE
-fwSuffix="_FW"
-libSuffix="_LIB"
+echo "Setting path of current directory to:"
 
-AIR_SDK="/Users/eoinlandy/SDKs/AIRSDK_33.1.1.345"
+chmod -R 777 './'
+
+pathtome=$PWD
+
+echo "CURRENT PATH:$pathtome"
+
+# pathtome="${pathtome%/*}"
+PROJECTNAME=AppleSignInANE
+# fwSuffix="_FW"
+# libSuffix="_LIB"
+
+rm -r "$pathtome/platforms/mac" 2> /dev/null
+rm "$pathtome/$PROJECTNAME.swc" 2> /dev/null
+rm "$pathtome/library.swf" 2> /dev/null
+
+
+AIR_SDK="/Users/ch0nk/HDP/AirSDK"
 
 ##############################################################################
 
-if [ ! -d "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release/" ]; then
-echo "No OSX build. Build using Xcode"
-exit
-fi
+echo "FRAMEWORK PATH: $pathtome/../../native_library/apple/$PROJECTNAME/Output/$PROJECTNAME/Build/Products/Release"
 
-if [ ! -d "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-iphonesimulator/" ]; then
-echo "No iOS Simulator build. Build using Xcode"
-exit
-fi
-
-if [ ! -d "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-iphoneos/" ]; then
-echo "No iOS Device build. Build using Xcode"
-exit
-fi
+# if [ ! -d "$pathtome/../../native_library/apple/$PROJECTNAME/Output/$PROJECTNAME/Build/Products/Release/" ]; then
+# echo "No OSX build. Build using Xcode"
+# exit
+# fi
 
 #Setup the directory.
 echo "Making directories."
@@ -33,34 +36,11 @@ echo "Making directories."
 if [ ! -d "$pathtome/platforms" ]; then
 mkdir "$pathtome/platforms"
 fi
-if [ ! -d "$pathtome/platforms/ios" ]; then
-mkdir "$pathtome/platforms/ios"
-fi
-if [ ! -d "$pathtome/platforms/ios/simulator" ]; then
-mkdir "$pathtome/platforms/ios/simulator"
-fi
-if [ ! -d "$pathtome/platforms/ios/simulator/Frameworks" ]; then
-mkdir "$pathtome/platforms/ios/simulator/Frameworks"
-fi
-if [ ! -d "$pathtome/platforms/ios/device" ]; then
-mkdir "$pathtome/platforms/ios/device"
-fi
-if [ ! -d "$pathtome/platforms/ios/device/Frameworks" ]; then
-mkdir "$pathtome/platforms/ios/device/Frameworks"
-fi
+
 if [ ! -d "$pathtome/platforms/mac" ]; then
+echo "Making macos directories."
 mkdir "$pathtome/platforms/mac"
 mkdir "$pathtome/platforms/mac/release"
-fi
-
-if [ ! -d "$pathtome/platforms/tvos" ]; then
-mkdir "$pathtome/platforms/tvos"
-fi
-if [ ! -d "$pathtome/platforms/tvos/device" ]; then
-mkdir "$pathtome/platforms/tvos/device"
-fi
-if [ ! -d "$pathtome/platforms/tvos/device/Frameworks" ]; then
-mkdir "$pathtome/platforms/tvos/device/Frameworks"
 fi
 
 ##############################################################################
@@ -70,19 +50,16 @@ echo "Copying SWC into place."
 cp "$pathtome/../bin/$PROJECTNAME.swc" "$pathtome/"
 
 #Extract contents of SWC.
-echo "Extracting files form SWC."
+echo "Extracting files from SWC."
 unzip "$pathtome/$PROJECTNAME.swc" "library.swf" -d "$pathtome"
 
 #Copy library.swf to folders.
 echo "Copying library.swf into place."
-cp "$pathtome/library.swf" "$pathtome/platforms/ios/simulator"
-cp "$pathtome/library.swf" "$pathtome/platforms/ios/device"
-cp "$pathtome/library.swf" "$pathtome/platforms/tvos/device"
 cp "$pathtome/library.swf" "$pathtome/platforms/mac/release"
 
 ##############################################################################
 # OSX
-FWPATH="$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release/$PROJECTNAME.framework/Versions/A/Frameworks"
+FWPATH="$pathtome/../../native_library/apple/$PROJECTNAME/Output/$PROJECTNAME/Build/Products/Release/$PROJECTNAME.framework/Versions/A/Frameworks"
 if [ -f "$FWPATH/libswiftAppKit.dylib" ]; then
 rm "$FWPATH/libswiftAppKit.dylib"
 fi
@@ -140,96 +117,13 @@ fi
 
 #Copy native libraries into place.
 echo "Copying native libraries into place."
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release/$PROJECTNAME.framework" "$pathtome/platforms/mac/release"
+cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Output/$PROJECTNAME/Build/Products/Release/$PROJECTNAME.framework" "$pathtome/platforms/mac/release"
 mv "$pathtome/platforms/mac/release/$PROJECTNAME.framework/Versions/A/Frameworks" "$pathtome/platforms/mac/release/$PROJECTNAME.framework"
 rm -r "$pathtome/platforms/mac/release/$PROJECTNAME.framework/Versions"
-
-##############################################################################
-# IOS
-#Copy native libraries into place.
-echo "Copying native libraries into place."
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-iphonesimulator/lib$PROJECTNAME$libSuffix.a" "$pathtome/platforms/ios/simulator/lib$PROJECTNAME.a"
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-iphoneos/lib$PROJECTNAME$libSuffix.a" "$pathtome/platforms/ios/device/lib$PROJECTNAME.a"
-cp -R -L "$pathtome/../../example-mobile/ios_dependencies/simulator/Frameworks/FreSwift.framework" "$pathtome/platforms/ios/simulator/Frameworks"
-cp -R -L "$pathtome/../../example-mobile/ios_dependencies/device/Frameworks/FreSwift.framework" "$pathtome/platforms/ios/device/Frameworks"
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-iphonesimulator/$PROJECTNAME$fwSuffix.framework" "$pathtome/platforms/ios/simulator/Frameworks"
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-iphoneos/$PROJECTNAME$fwSuffix.framework" "$pathtome/platforms/ios/device/Frameworks"
+rm -r "$pathtome/platforms/mac/release/$PROJECTNAME.framework/Frameworks/SwiftyJSON.framework/Versions"
 
 
-#move the swift dylibs into root of "$pathtome/platforms/ios/ios_dependencies/Frameworks" as per Adobe docs for AIR27
 
-echo "Copying Swift dylibs into place for device."
-#Device
-if [ -e "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks" ]
-then
-for dylib in "$pathtome"/platforms/ios/device/Frameworks/"$PROJECTNAME""$fwSuffix".framework/Frameworks/*
-do
-mv -f "$dylib" "$pathtome/../../example-mobile/ios_dependencies/device/Frameworks"
-done
-rm -r "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks"
-fi
-
-echo "Copying Swift dylibs into place for simulator."
-#Simulator
-if [ -e "$pathtome/platforms/ios/simulator/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks" ]
-then
-for dylib in "$pathtome"/platforms/ios/simulator/Frameworks/"$PROJECTNAME""$fwSuffix".framework/Frameworks/*
-do
-mv -f "$dylib" "$pathtome/../../example-mobile/ios_dependencies/simulator/Frameworks"
-done
-if [ -d "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks" ]; then
-rm -r "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks"
-fi
-fi
-
-
-if [ -f "$pathtome/../../example-mobile/ios_dependencies/simulator/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib" ]; then
-rm "$pathtome/../../example-mobile/ios_dependencies/simulator/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib"
-fi
-if [ -f "$pathtome/../../example-mobile/ios_dependencies/device/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib" ]; then
-rm "$pathtome/../../example-mobile/ios_dependencies/device/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib"
-fi
-if [ -f "$pathtome/platforms/ios/simulator/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib" ]; then
-rm "$pathtome/platforms/ios/simulator/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib"
-fi
-if [ -f "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib" ]; then
-rm "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework/libswiftRemoteMirror.dylib"
-fi
-
-cp -R -L "$pathtome/platforms/ios/simulator/Frameworks/$PROJECTNAME$fwSuffix.framework" "$pathtome/../../example-mobile/ios_dependencies/simulator/Frameworks"
-cp -R -L "$pathtome/platforms/ios/device/Frameworks/$PROJECTNAME$fwSuffix.framework" "$pathtome/../../example-mobile/ios_dependencies/device/Frameworks"
-
-##############################################################################
-# TVOS
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-appletvos/lib$PROJECTNAME$libSuffix.a" "$pathtome/platforms/tvos/device/lib$PROJECTNAME.a"
-cp -R -L "$pathtome/../../native_library/apple/$PROJECTNAME/Build/Products/Release-appletvos/$PROJECTNAME$fwSuffix.framework" "$pathtome/platforms/tvos/device/Frameworks"
-cp -R -L "$pathtome/../../example-tvos/tvos_dependencies/device/Frameworks/FreSwift.framework" "$pathtome/platforms/tvos/device/Frameworks"
-
-#move the swift dylibs into root of "$pathtome/platforms/tvos/tvos_dependencies/Frameworks" as per Adobe docs for AIR27
-#create folders if they don't exist
-if [ ! -d "$pathtome/../../example-tvos/tvos_dependencies" ]; then
-mkdir "$pathtome/../../example-tvos/tvos_dependencies"
-fi
-if [ ! -d "$pathtome/../../example-tvos/tvos_dependencies/device" ]; then
-mkdir "$pathtome/../../example-tvos/tvos_dependencies/device"
-fi
-if [ ! -d "$pathtome/../../example-tvos/tvos_dependencies/device/Frameworks" ]; then
-mkdir "$pathtome/../../example-tvos/tvos_dependencies/device/Frameworks"
-fi
-
-echo "Copying Swift dylibs into place for device."
-#Device
-
-if [ -e "$pathtome/platforms/tvos/device/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks" ]
-then
-for dylib in "$pathtome"/platforms/tvos/device/Frameworks/"$PROJECTNAME""$fwSuffix".framework/Frameworks/*
-do
-mv -f "$dylib" "$pathtome/../../example-tvos/tvos_dependencies/device/Frameworks"
-done
-rm -r "$pathtome/platforms/tvos/device/Frameworks/$PROJECTNAME$fwSuffix.framework/Frameworks"
-fi
-
-cp -R -L "$pathtome/platforms/tvos/device/Frameworks/$PROJECTNAME$fwSuffix.framework" "$pathtome/../../example-tvos/tvos_dependencies/device/Frameworks"
 
 ##############################################################################
 #Run the build command.
@@ -237,31 +131,19 @@ echo "Building ANE."
 "$AIR_SDK"/bin/adt -package \
 -target ane "$pathtome/$PROJECTNAME.ane" "$pathtome/extension.xml" \
 -swc "$pathtome/$PROJECTNAME.swc" \
--platform iPhone-x86  -C "$pathtome/platforms/ios/simulator" "library.swf" "Frameworks" "lib$PROJECTNAME.a" \
--platformoptions "$pathtome/platforms/ios/platform.xml" \
--platform iPhone-ARM  -C "$pathtome/platforms/ios/device" "library.swf" "Frameworks" "lib$PROJECTNAME.a" \
--platformoptions "$pathtome/platforms/ios/platform.xml" \
--platform appleTV-ARM -C "$pathtome/platforms/tvos/device" "library.swf" "Frameworks" "lib$PROJECTNAME.a" \
--platformoptions "$pathtome/platforms/tvos/platform.xml" \
 -platform MacOS-x86-64 -C "$pathtome/platforms/mac/release" "$PROJECTNAME.framework" "library.swf"
 
 #remove the frameworks from sim and device, as not needed any more
-rm -r "$pathtome/platforms/ios/simulator"
-rm -r "$pathtome/platforms/ios/device"
-rm -r "$pathtome/platforms/tvos/device"
-rm -r "$pathtome/platforms/mac"
+# rm -r "$pathtome/platforms/mac"
 rm "$pathtome/$PROJECTNAME.swc"
 rm "$pathtome/library.swf"
 
-echo "Packaging docs into ANE."
-zip "$pathtome/$PROJECTNAME.ane" -u docs/*
-
-zip "$pathtome/$PROJECTNAME.ane" -u "Entitlements.entitlements"
-zip "$pathtome/$PROJECTNAME.ane" -u "InfoAdditions.plist"
-zip "$pathtome/$PROJECTNAME.ane" -u "air_package.json"
+# echo "Packaging docs into ANE."
+# zip "$pathtome/$PROJECTNAME.ane" -u docs/*
+# zip "$pathtome/$PROJECTNAME.ane" -u "Entitlements.entitlements"
+# zip "$pathtome/$PROJECTNAME.ane" -u "InfoAdditions.plist"
+# zip "$pathtome/$PROJECTNAME.ane" -u "air_package.json"
 
 cp "$pathtome/$PROJECTNAME.ane" "$pathtome/../../example-desktop/extensions/$PROJECTNAME.ane"
-cp "$pathtome/$PROJECTNAME.ane" "$pathtome/../../example-tvos/extensions/$PROJECTNAME.ane"
-cp "$pathtome/$PROJECTNAME.ane" "$pathtome/../../example-mobile/extensions/$PROJECTNAME.ane"
 
 echo "Finished."

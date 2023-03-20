@@ -19,7 +19,7 @@ import FreSwift
 
 extension SwiftController: FreSwiftMainController {
     @objc public func getFunctions(prefix: String) -> [String] {
-        functionsToSet["\(prefix)init"] = initController
+        functionsToSet["\(prefix)initController"] = initController
         functionsToSet["\(prefix)createGUID"] = createGUID
         functionsToSet["\(prefix)getOsVersion"] = getOsVersion
         functionsToSet["\(prefix)signIn"] = signIn

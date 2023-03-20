@@ -36,7 +36,7 @@ CONTEXT_INIT(TRASI) {
     
     static FRENamedFunction extensionFunctions[] =
     {
-         MAP_FUNCTION(TRASI, init)
+         MAP_FUNCTION(TRASI, initController)
         ,MAP_FUNCTION(TRASI, getOsVersion)
         ,MAP_FUNCTION(TRASI, createGUID)
         ,MAP_FUNCTION(TRASI, signIn)

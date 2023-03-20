@@ -1,37 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension xmlns="http://ns.adobe.com/air/extension/24.0">
+<extension xmlns="http://ns.adobe.com/air/extension/50.2">
     <id>com.tuarua.AppleSignInANE</id>
 	<name>Apple Sign In ANE</name>
 	<copyright>This work is licensed under Apache License, Copyright (c) 2018 Tua Rua Ltd.</copyright>
 	<versionNumber>1.8.0</versionNumber>
     <platforms>
-     <platform name="iPhone-ARM">
-        <applicationDeployment>
-            <nativeLibrary>libAppleSignInANE.a</nativeLibrary>
-            <initializer>TRASIExtInizer</initializer>
-            <finalizer>TRASIExtFinizer</finalizer>
-        </applicationDeployment>
-    </platform>
-     <platform name="iPhone-x86">
-         <applicationDeployment>
-             <nativeLibrary>libAppleSignInANE.a</nativeLibrary>
-             <initializer>TRASIExtInizer</initializer>
-             <finalizer>TRASIExtFinizer</finalizer>
-         </applicationDeployment>
-     </platform>
-     <platform name="appleTV-ARM">
-         <applicationDeployment>
-             <nativeLibrary>libAppleSignInANE.a</nativeLibrary>
-             <initializer>TRASIExtInizer</initializer>
-             <finalizer>TRASIExtFinizer</finalizer>
-         </applicationDeployment>
-     </platform>
-     <platform name="MacOS-x86-64">
-         <applicationDeployment>
-             <nativeLibrary>AppleSignInANE.framework</nativeLibrary>
-             <initializer>TRASIExtInizer</initializer>
-             <finalizer>TRASIExtFinizer</finalizer>
-         </applicationDeployment>
-     </platform>
+        <platform name="MacOS-x86-64">
+            <applicationDeployment>
+                <nativeLibrary>AppleSignInANE.framework</nativeLibrary>
+                <initializer>TRASIExtInizer</initializer>
+                <finalizer>TRASIExtFinizer</finalizer>
+            </applicationDeployment>
+        </platform>
     </platforms>
 </extension>

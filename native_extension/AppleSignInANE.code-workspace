@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"as3mxml.sdk.framework": "/Users/ch0nk/HDP/AirSDK"
+	}
+}
